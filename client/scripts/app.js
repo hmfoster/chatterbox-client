@@ -25,39 +25,38 @@ app.send = function(data){
 };
 
 app.fetch = function(){
-  $.get('https://api.parse.com/1/classes/chatterbox', function(data, status){
-    console.log("get request sent! received ", JSON.stringify(data), " and ", status);
-    var messages = data.results;
-    for (var i = 0; i < messages.length; i++) {
-      //create escaping function
-      var escaper = function(str){
-        //split string into an array, 
-        var split = str.split('');
-        //then loop over array
-        _.map(split, function(c, i, split){
-        //get char code and replace in array
-          return '' + c.charCodeAt(0) + '';
-        });
-        //rejoin and return
-        return split.join('');
-      }
 
-      console.log(escaper('Hailey!!!><*& &^$*% Foster????'));
 
-      var message = $('.allMessages').append('<div class = "message">');
-      var userName = $(('<span class = "userName">@'+ messages[i].username+'</span>'));
-      var dateCreated = $(('<span class = "dateCreated">'+ messages[i].dateCreated+'</span>'));
-      var updatedAt = $(('<span class = "updatedAt">'+ messages[i].updatedAt+'</span>'));
-      var text = $(('<span class = "text">'+ messages[i].text+'</span>'));
-      message.append(userName, userName, dateCreated,updatedAt,text);
-    }
+  var readyState = $.get('https://api.parse.com/1/classes/chatterbox', function(data, status){
 
+    app.messages = data.results;
+
+    console.log("data = ", data);
+    return data.results;
   });
 };
 
 app.clearMessages = function(){};
 
-app.addMessage = function(){};
+app.addMessage = function(){
+
+  app.fetch();
+
+  console.log("app.messages = ", app.messages);
+
+  for (var i = 0; i < app.messages.length; i++) {
+
+    var message = $('.allMessages').append('<div class = "message">');
+    var userName = $(('<span class = "userName">@'+ app.messages[i].username+'</span>'));
+    var dateCreated = $(('<span class = "dateCreated">'+ app.messages[i].dateCreated+'</span>'));
+    var updatedAt = $(('<span class = "updatedAt">'+ app.messages[i].updatedAt+'</span>'));
+    var text = $(('<span class = "text">'+ app.messages[i].text+'</span>'));
+    message.append(userName, userName, dateCreated,updatedAt,text);
+
+  }
+
+
+};
 
 app.addRoom = function(){};
 
